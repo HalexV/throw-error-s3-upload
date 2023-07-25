@@ -1,0 +1,7 @@
+Use node version 18
+
+To run the code:
+
+npm ci
+docker compose up -d
+npm start
