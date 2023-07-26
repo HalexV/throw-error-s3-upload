@@ -4,7 +4,7 @@ import { pipeline } from "node:stream/promises";
 import { myTransform } from "./myTransform.js";
 import { Readable } from "node:stream";
 import { randomUUID } from "node:crypto";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 
 async function* myReadable() {
   const iterations = 1000;
@@ -23,15 +23,16 @@ async function* myReadable() {
 
 async function uploadS3(stream) {
   const objectKey = `${randomUUID()}.jpeg`;
-  // for await (const chunk of stream) {
-  // }
   const params = {
     Bucket: "test",
     Key: objectKey,
     Body: Readable.from(stream),
   };
 
-  return s3Client.send(new PutObjectCommand(params));
+  return new Upload({
+    client: s3Client,
+    params,
+  }).done();
 }
 
 try {
